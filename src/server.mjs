@@ -14,12 +14,17 @@ async function linq(path, body, method = "POST") {
   });
 }
 
-// Linq's exact webhook field names can vary by version — read defensively.
+// Linq v3 webhook: { event_type, data: { chat:{id}, direction, parts:[{type,value}], sender_handle:{is_me} } }
 function parseEvent(ev) {
-  const type = ev?.type ?? ev?.event;
-  const chatId = ev?.chat?.id ?? ev?.chat_id ?? ev?.data?.chat?.id ?? ev?.data?.chat_id;
-  const text = ev?.message?.text ?? ev?.data?.message?.text ?? ev?.text ?? "";
-  return { type, chatId, text };
+  const type = ev?.event_type ?? ev?.type ?? ev?.event;
+  const d = ev?.data ?? ev;
+  const chatId = d?.chat?.id ?? d?.chat_id ?? ev?.chat?.id;
+  const direction = d?.direction;
+  const isMe = d?.sender_handle?.is_me ?? false;
+  const parts = d?.parts ?? d?.message?.parts ?? ev?.message?.parts;
+  const text = (Array.isArray(parts) ? parts.find((p) => p?.type === "text")?.value : null)
+    ?? d?.message?.text ?? d?.text ?? ev?.text ?? "";
+  return { type, chatId, text, direction, isMe };
 }
 
 const app = express();
@@ -30,6 +35,7 @@ app.get("/health", (_req, res) =>
 
 app.post("/webhook", async (req, res) => {
   res.sendStatus(200); // ack immediately; work happens async
+  console.log("🔔 raw webhook:", JSON.stringify(req.body));
   const { type, chatId, text } = parseEvent(req.body);
   if (type !== "message.received" || !chatId || !text) return;
   console.log(`📥 [${chatId}] ${text}`);
