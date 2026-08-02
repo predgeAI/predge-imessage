@@ -4,6 +4,7 @@
   "type": "module",
   "description": "Predge in your iMessage bubble — a card-carrying AI agent that answers whale-trading questions over iMessage (Linq) and pays Predge per query via x402.",
   "scripts": {
+    "start": "node src/server.mjs",
     "server": "node --env-file=.env src/server.mjs",
     "dev": "node --env-file=.env --watch src/server.mjs",
     "simulate": "node --env-file=.env src/simulate.mjs"
