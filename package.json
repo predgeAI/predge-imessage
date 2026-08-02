@@ -1,0 +1,18 @@
+{
+  "name": "predge-imessage",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Predge in your iMessage bubble — a card-carrying AI agent that answers whale-trading questions over iMessage (Linq) and pays Predge per query via x402.",
+  "scripts": {
+    "server": "node --env-file=.env src/server.mjs",
+    "dev": "node --env-file=.env --watch src/server.mjs",
+    "simulate": "node --env-file=.env src/simulate.mjs"
+  },
+  "dependencies": {
+    "@x402/evm": "~2.18.0",
+    "@x402/fetch": "~2.18.0",
+    "express": "^5.2.1",
+    "openai": "^6.49.0",
+    "viem": "^2.55.10"
+  }
+}
